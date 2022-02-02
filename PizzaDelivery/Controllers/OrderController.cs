@@ -51,5 +51,12 @@ namespace PizzaDelivery.Controllers
             return Ok(createdOrder);
         }
 
+        [HttpPut]
+        public async Task<IActionResult> CompleteOrder(int orderId)
+        {
+            var createdOrder = await _orderService.CompleteOrder(orderId).ConfigureAwait(false);
+            return Ok(createdOrder);
+        }
+
     }
 }

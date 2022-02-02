@@ -17,6 +17,9 @@ namespace PizzaDelivery.Models.Entities
         }
 
         public virtual DbSet<Order> Orders { get; set; } = null!;
+        public virtual DbSet<OrderProduct> OrderProducts { get; set; } = null!;
+        public virtual DbSet<Product> Products { get; set; } = null!;
+        public virtual DbSet<Store> Stores { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -36,6 +39,8 @@ namespace PizzaDelivery.Models.Entities
             {
                 entity.ToTable("order");
 
+                entity.HasIndex(e => e.StoreId, "store_id_idx");
+
                 entity.Property(e => e.Id)
                     .HasColumnType("int(10) unsigned")
                     .HasColumnName("id");
@@ -53,6 +58,76 @@ namespace PizzaDelivery.Models.Entities
                 entity.Property(e => e.StoreId)
                     .HasColumnType("int(10) unsigned")
                     .HasColumnName("store_id");
+
+                entity.HasOne(d => d.Store)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.StoreId)
+                    .HasConstraintName("fk_order_store");
+            });
+
+            modelBuilder.Entity<OrderProduct>(entity =>
+            {
+                entity.ToTable("order_products");
+
+                entity.HasIndex(e => e.OrderId, "fk_orders_idx");
+
+                entity.HasIndex(e => e.ProductId, "fk_products_idx");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(10) unsigned")
+                    .HasColumnName("id");
+
+                entity.Property(e => e.OrderId)
+                    .HasColumnType("int(10) unsigned")
+                    .HasColumnName("order_id");
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnType("int(10) unsigned")
+                    .HasColumnName("product_id");
+
+                entity.HasOne(d => d.Order)
+                    .WithMany(p => p.OrderProducts)
+                    .HasForeignKey(d => d.OrderId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_orders");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.OrderProducts)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_products");
+            });
+
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.ToTable("product");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(10) unsigned")
+                    .HasColumnName("id");
+
+                entity.Property(e => e.Desc)
+                    .HasMaxLength(45)
+                    .HasColumnName("desc");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(45)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Total).HasColumnName("total");
+            });
+
+            modelBuilder.Entity<Store>(entity =>
+            {
+                entity.ToTable("store");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(10) unsigned")
+                    .HasColumnName("id");
+
+                entity.Property(e => e.StoreAddress)
+                    .HasMaxLength(200)
+                    .HasColumnName("store_address");
             });
 
             OnModelCreatingPartial(modelBuilder);
