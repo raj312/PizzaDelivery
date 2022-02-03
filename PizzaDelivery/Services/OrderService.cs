@@ -41,7 +41,7 @@ namespace PizzaDelivery.Services
             return addedOrder;
         }
 
-        public async Task<Order?> UpdateOrder(int orderId, List<uint> productIds)
+        public async Task<Order?> UpdateOrder(uint orderId, List<uint> productIds)
         {
             var order = await _context.Orders.FindAsync(orderId).ConfigureAwait(false);
 
@@ -65,13 +65,13 @@ namespace PizzaDelivery.Services
             return updatedOrder;
         }
 
-        public async Task<Order?> GetOrder(int orderId)
+        public async Task<Order?> GetOrder(uint orderId)
         {
             var order = await _context.Orders.FindAsync(orderId).ConfigureAwait(false);
             return order;
         }
 
-        public async Task<Order?> CancelOrder(int orderId)
+        public async Task<Order?> CancelOrder(uint orderId)
         {
             // typically we would just update statuses of an order rather than hard delete but for the sake of demo, we will delete the entry
             var order = await GetOrder(orderId).ConfigureAwait(false);
@@ -87,7 +87,7 @@ namespace PizzaDelivery.Services
             return deletedOrder;
         }
 
-        public async Task<Order?> CompleteOrder(int orderId)
+        public async Task<Order?> CompleteOrder(uint orderId)
         {
             var orderToComplete = await GetOrder(orderId).ConfigureAwait(false);
             if (orderToComplete == null)

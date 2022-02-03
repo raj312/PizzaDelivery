@@ -24,7 +24,7 @@ namespace PizzaDelivery.Controllers
         }
 
         [HttpGet("{orderId}")]
-        public async Task<IActionResult> GetOrder(int orderId)
+        public async Task<IActionResult> GetOrder(uint orderId)
         {
             var order = await _orderService.GetOrder(orderId).ConfigureAwait(false);
             return Ok(order);
@@ -37,22 +37,23 @@ namespace PizzaDelivery.Controllers
             return Ok(createdOrder);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateOrder(int orderId, List<uint> productIds)
+        [HttpPut("{orderId}")]
+        public async Task<IActionResult> UpdateOrder(uint orderId, List<uint> productIds)
         {
             var createdOrder = await _orderService.UpdateOrder(orderId, productIds).ConfigureAwait(false);
             return Ok(createdOrder);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> CancelOrder(int orderId)
+        [HttpDelete("{orderId}")]
+        public async Task<IActionResult> CancelOrder(uint orderId)
         {
             var createdOrder = await _orderService.CancelOrder(orderId).ConfigureAwait(false);
             return Ok(createdOrder);
         }
 
         [HttpPut]
-        public async Task<IActionResult> CompleteOrder(int orderId)
+        [Route("Complete/{orderId}")]
+        public async Task<IActionResult> CompleteOrder(uint orderId)
         {
             var createdOrder = await _orderService.CompleteOrder(orderId).ConfigureAwait(false);
             return Ok(createdOrder);
