@@ -17,7 +17,6 @@ namespace PizzaDelivery.Models.Entities
         }
 
         public virtual DbSet<Order> Orders { get; set; } = null!;
-        public virtual DbSet<OrderProduct> OrderProducts { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<Store> Stores { get; set; } = null!;
 
@@ -25,8 +24,6 @@ namespace PizzaDelivery.Models.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseMySql("server=pizza-delivery-test.mysql.database.azure.com;user=raj_admin;password=Z6H4KkRkfM;database=pizza", Microsoft.EntityFrameworkCore.ServerVersion.Parse("5.7.32-mysql"));
             }
         }
 
@@ -63,39 +60,6 @@ namespace PizzaDelivery.Models.Entities
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.StoreId)
                     .HasConstraintName("fk_order_store");
-            });
-
-            modelBuilder.Entity<OrderProduct>(entity =>
-            {
-                entity.ToTable("order_products");
-
-                entity.HasIndex(e => e.OrderId, "fk_orders_idx");
-
-                entity.HasIndex(e => e.ProductId, "fk_products_idx");
-
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(10) unsigned")
-                    .HasColumnName("id");
-
-                entity.Property(e => e.OrderId)
-                    .HasColumnType("int(10) unsigned")
-                    .HasColumnName("order_id");
-
-                entity.Property(e => e.ProductId)
-                    .HasColumnType("int(10) unsigned")
-                    .HasColumnName("product_id");
-
-                entity.HasOne(d => d.Order)
-                    .WithMany(p => p.OrderProducts)
-                    .HasForeignKey(d => d.OrderId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_orders");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.OrderProducts)
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_products");
             });
 
             modelBuilder.Entity<Product>(entity =>

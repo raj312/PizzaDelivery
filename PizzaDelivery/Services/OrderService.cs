@@ -23,12 +23,17 @@ namespace PizzaDelivery.Services
         {
             _context = context;
         }
-        public async Task<Order> CreateOrder(Order order)
+        public async Task<Order> CreateOrder(List<uint> productIds)
         {
-            var orderTotal = order.OrderProducts.Sum(op => op.Product.Total) ?? 0;
+            var orderTotal = _context.Products
+                .Where(p => productIds.Contains(p.Id))
+                .Sum(p => p.Total) ?? 0;
 
-            order.CreatedDate = DateTime.UtcNow;
-            order.Amount = orderTotal * TaxRateConstants.TaxRate;
+            var order = new Order
+            {
+                CreatedDate = DateTime.UtcNow,
+                Amount = orderTotal * TaxRateConstants.TaxRate
+            };
 
             var addedOrder = _context.Orders.Add(order).Entity;
             await _context.SaveChangesAsync().ConfigureAwait(false);
@@ -36,9 +41,9 @@ namespace PizzaDelivery.Services
             return addedOrder;
         }
 
-        public async Task<Order?> UpdateOrder(Order orderToUpdate)
+        public async Task<Order?> UpdateOrder(int orderId, List<uint> productIds)
         {
-            var order = await _context.Orders.FindAsync(orderToUpdate.Id).ConfigureAwait(false);
+            var order = await _context.Orders.FindAsync(orderId).ConfigureAwait(false);
 
             if (order == null)
             {
@@ -48,10 +53,11 @@ namespace PizzaDelivery.Services
 
             // typically we map from DTO to entity and only update the properties that we need to update.
 
-            var orderTotal = orderToUpdate.OrderProducts.Sum(op => op.Product.Total) ?? 0;
+            var orderTotal = _context.Products
+                .Where(p => productIds.Contains(p.Id))
+                .Sum(p => p.Total) ?? 0;
 
             order.Amount = orderTotal * TaxRateConstants.TaxRate;
-            order.StoreId = orderToUpdate.StoreId;
 
             var updatedOrder = _context.Orders.Update(order).Entity;
             await _context.SaveChangesAsync().ConfigureAwait(false);

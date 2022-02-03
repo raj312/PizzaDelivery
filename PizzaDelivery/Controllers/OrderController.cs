@@ -31,16 +31,16 @@ namespace PizzaDelivery.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PlaceOrder(Order order)
+        public async Task<IActionResult> PlaceOrder(List<uint> productIds)
         {
-            var createdOrder = await _orderService.CreateOrder(order).ConfigureAwait(false);
+            var createdOrder = await _orderService.CreateOrder(productIds).ConfigureAwait(false);
             return Ok(createdOrder);
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateOrder(Order order)
+        public async Task<IActionResult> UpdateOrder(int orderId, List<uint> productIds)
         {
-            var createdOrder = await _orderService.UpdateOrder(order).ConfigureAwait(false);
+            var createdOrder = await _orderService.UpdateOrder(orderId, productIds).ConfigureAwait(false);
             return Ok(createdOrder);
         }
 

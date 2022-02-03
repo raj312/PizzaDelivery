@@ -5,11 +5,6 @@ namespace PizzaDelivery.Models.Entities
 {
     public partial class Order
     {
-        public Order()
-        {
-            OrderProducts = new HashSet<OrderProduct>();
-        }
-
         public uint Id { get; set; }
         public double Amount { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -17,6 +12,5 @@ namespace PizzaDelivery.Models.Entities
         public uint? StoreId { get; set; }
 
         public virtual Store? Store { get; set; }
-        public virtual ICollection<OrderProduct> OrderProducts { get; set; }
     }
 }
