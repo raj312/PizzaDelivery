@@ -1,3 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using PizzaDelivery.Interfaces;
+using PizzaDelivery.Models.Entities;
+using PizzaDelivery.Services;
+using System.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +12,13 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+builder.Services.AddDbContext<PizzaDeliveryContext>(opt =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("OrderDb");
+    opt.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
 
 var app = builder.Build();
 
